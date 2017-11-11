@@ -11,7 +11,7 @@
 O objetivo do trabalho é em sua essência o estudo do protocolo ARP, que
 será apresentado como uma aplicação usando sockets raw que possa ser
 utilizada para estudar o protocolo ARP e demonstrar um ataque do tipo
-ARP poisoning fazendo um man-in-the-middle. Esse tipo de ataque consiste
+ARP poisoning fazendo um _man-in-the-middle_. Esse tipo de ataque consiste
 em enviar pacotes ARP de modo a modificar a tabela ARP de um computador
 alvo e permitir o redirecionamento de tráfego de rede para um computador
 intermediário.
@@ -88,48 +88,44 @@ ordem:
 3. IP do roteador
 
 Na fase de ARP Discover, nosso objetivo é descobrir o endereço MAC dos
-dois IPs fornecidos. Não acontece nenhum tipo de ataque durante o ARP
-Discover.
+dois endereços de IP fornecidos. Não acontece nenhum tipo de ataque
+durante o ARP Discover. São montados e enviados pacotes ARP _request_
+para o roteador e a máquina alvo.  Ao receber os ARP _reply_, os dados
+são impressos na tela do terminal.
 
-Para o Arpdiscover, nos atentamos ao terminal que enviamos por parâmatro
-a interface que é representada por wlan0, o IP da máquina alvo que é
-192.168.86.102, e o IP do roteador 192.168.86.1
-
-Tendo recebido os IPs por parâmentro são enviados dois ARP requests, um
-para cada IP. Os ARP reply recebidos como resposta, são escritos na tela
-como podemos ver na figura abaixo.
-
-![Figura 1: Terminal Linux]()
+![ARP Discover](https://i.imgur.com/aq2iKBk.png)
 
 ## ARP Spoofing
 
-Tendo os MACS necessários para a realização do ataque (descobertos no
-Arpdiscover), são montados e enviados dois pacotes Arp Reply
-constantemente. Um que diz para a máquina alvo que o MAC do roteador é o
-nosso mac, e outro que diz para o roteador que o mac da máquina alvo é o
-nosso MAC. Isso pode ser observado na captura de tela abaixo, onde
-observávamos a rede através do programa Wireshark.
+Tendo os MACS necessários para a realização do ataque, são montados e
+enviados dois pacotes ARP *Reply* constantemente. Um que diz para a
+máquina alvo que o MAC do roteador é o nosso MAC, e outro que diz para o
+roteador que o MAC da máquina alvo é o nosso MAC. Isso pode ser
+observado na captura de tela abaixo, onde mostramos a saída do comando
+`arp -n`, executado na máquina alvo, após o ataque.
 
-![Figura 2: ARP no Wireshark]()
+![arp -n](https://i.imgur.com/mdfcGpZ.png)
+
+Utilizando o programa Wireshark, capturamos os pacotes de rede que
+trafegavam no momento e conseguimos ver exatamente o fluxo descrito na
+introdução acontecendo.
+
+![wireshark](https://i.imgur.com/d9yIPIC.png)
 
 ## Verificação do funcionamento
 
-![Figura 3: Tabelas ARP]()
+Para verificar que o programa funcionava corretamente, realizamos
+requisições HTTP, a partir da máquina alvo, após ter sido atacada. Se
+tudo estiver funcionando como planejamos, o pacote que ela vai enviar
+deve ser destinado ao MAC da máquina atacante, o Raspberry Pi. Sob
+condições normais, o endereço correto seria o do roteador.
 
-![Figura 4: Tabelas ARP -n]()
-
-## Redirecionamento de tráfego HTTP
-
-Para o redirecionamento, utilizamos o comando ARP, que foi efetuado na
-seção acima, e vimos no Wireshark filtrando por HTTP. Abaixo na imagem,
-é possivel ver que o destino é de fato o RaspberryPi
-
-![Figura 5: HTTP no Wireshark]()
+![Redirecionamento HTTP](https://i.imgur.com/kOZlppS.png)
 
 ## Conclusões
 
-Foi possível constatar que através do Arpdiscover, é possível obter os
-endereços físicos, passando os IPS, necessários, e que a partir deles,
-temos o necessário para realizar o Arpspoofing que ocorre quando eu
-informo o roteador que o MAC do alvo é o nosso, assim como eu digo para
-o IP alvo que o MAC do roteador sou eu.
+Com a realização desse trabalho foi possível constatar o quão frágil é a
+segurança da rede sem as técnicas de segurança mais modernas. É possível
+olhar os pacotes destinados a outro computador, e ainda analisar seu
+conteúdo. Protocolos que utilizam criptografia, como o HTTPS, ajudam a
+previnir o roubo das informações nesse tipo de ataque.
