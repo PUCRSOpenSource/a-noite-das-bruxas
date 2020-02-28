@@ -1,7 +1,7 @@
 # Redes de Computadores I - Ataque ARP Poisoning
 
 - PUCRS
-- Marina Lain de Barros
+- Marina Serial Experiments Lain de Barros
 - 11 de novembro de 2017
 
 ---
